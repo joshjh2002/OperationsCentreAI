@@ -1,0 +1,23 @@
+{
+    "embed": {
+        "title": "Minecraft Server Info",
+        "description": "Creative plot-based server with loads of land for you to build whatever you want!",
+        "color": 10157865,
+        "image": {
+            "url": "https://seeklogo.com/images/M/minecraft-logo-5EAD3A1535-seeklogo.com.png"
+        },
+        "fields": [{
+                "name": "Java",
+                "value": "IP: 51.68.208.6:25623"
+            },
+            {
+                "name": "Bedbock",
+                "value": "IP: 51.68.208.6\nPort: 25623"
+            },
+            {
+                "name": "Info:",
+                "value": "Make sure to read the rules! They're located in the spawn area.\n\nPlease consider voting for the server [here](https://minecraftservers.org/server/601008)! We really appreciate the support!"
+            }
+        ]
+    }
+}

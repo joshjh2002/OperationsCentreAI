@@ -1,0 +1,14 @@
+{
+  "name": "operationscentrebot",
+  "version": "1.0.0",
+  "description": "Operations Centre AI System",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "joshjh2002",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  }
+}
