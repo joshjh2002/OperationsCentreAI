@@ -37,7 +37,7 @@ module.exports = {
                     },
                 ],
             };
-            message.channel.send({ embed });
+            message.channel.send({ embeds: [embed] });
         } else {
             message.channel.send(
                 "You do not have the right permissions to use this command."

@@ -19,7 +19,7 @@ module.exports = {
                     value: "<:steam:904342254339129354> [Steam](https://steamcommunity.com/groups/operations-centre)\n:facebook: [Facebook](https://www.facebook.com/OperationsCentre)\n:instagram: [Instagram](https://instagram.com/operations_centre?igshid=ca1z2fkgwq4r)\n:twitter: [Twitter](https://twitter.com/OperationsCent)\n:youtube: [YouTube](https://www.youtube.com/channel/UCm-FUo4TagET2kA-JpVpwWw)",
                 }, ],
             };
-            message.channel.send({ embed });
+            message.channel.send({ embeds: [embed] });
         } else {
             message.channel.send(
                 "You do not have the right permissions to use this command."
