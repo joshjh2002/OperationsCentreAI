@@ -21,7 +21,6 @@ client.once("ready", () => {
   console.log("Operations Centre AI: Online!");
 });
 
-/*
 client.on("message", (message) => {
   try {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -33,18 +32,6 @@ client.on("message", (message) => {
   } catch (error) {
     message.channel.send("This command was not recognised. Please try again!");
   }
-});
-*/
-
-client.on("interactionCreate", async(interaction) =>{
-    if (!interactio.isCommand())
-    {
-        return;
-    }
-
-    const {commandName, option} = interaction;
-    
-    return;
 });
 
 client.on("messageReactionAdd", (reaction, user) => {
