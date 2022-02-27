@@ -1,0 +1,24 @@
+{
+  "embed": {
+    "title": "Create a Support Ticket",
+    "description": "React with the relevant emoji to create a ticket and get in contact with the appropriate team!",
+    "color": 12743972,
+    "fields": [
+      {
+        "name": "<:ConanExiles:884739183543988284>",
+        "value": "Report an issue with the\n        Conan server",
+        "inline": true
+      },
+      {
+        "name": "<:discord_logo:947544355533652048>",
+        "value": "Report an issue with the\n        Discord server",
+        "inline": true
+      },
+      {
+        "name": "☑️",
+        "value": "Report a different issue",
+        "inline": true
+      }
+    ]
+  }
+}

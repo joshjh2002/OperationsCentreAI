@@ -1,5 +1,7 @@
 const Discord = require("discord.js");
-const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
+const client = new Discord.Client({
+  intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS"],
+});
 
 const prefix = "-";
 
@@ -19,9 +21,13 @@ client.login("ODEzNzk5MTc4Njg5NzA4MTA0.YDUjiw.vrCdeKy0SPEYP6AGQYDM6A07JOg");
 
 client.once("ready", () => {
   console.log("Operations Centre AI: Online!");
+
+  client.channels.cache
+    .get("947546216126890079")
+    .messages.fetch("947637068090208317");
 });
 
-client.on("message", (message) => {
+client.on("messageCreate", (message) => {
   try {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
@@ -35,8 +41,53 @@ client.on("message", (message) => {
 });
 
 client.on("messageReactionAdd", (reaction, user) => {
-  if (!reaction.message.author.id === user.id) {
-    //Do whatever you like with it
-    console.log(reaction.name);
+  if (user.bot) return;
+  //Do whatever you like with it
+  if (reaction.message.id === "947637068090208317") {
+    reaction.users.remove(user.id);
+    let admin_role = "";
+    console.log(reaction.emoji.name);
+    if (reaction.emoji.name === "ConanExiles") {
+      admin_role = "<@&" + "892427926811865119" + ">";
+      create_channel(reaction, user, admin_role);
+    } else if (reaction.emoji.name === "discord_logo") {
+      admin_role = "<@&" + "893155966978240603" + ">";
+      create_channel(reaction, user, admin_role);
+    } else if (reaction.emoji.name === "☑") {
+      admin_role = "<@&" + "893155966978240603" + ">";
+      create_channel(reaction, user, admin_role);
+    }
   }
 });
+
+async function create_channel(reaction, user, admin_role) {
+  console.log("Reaction Created on Report Message!");
+  const channel = await reaction.message.guild.channels.create(
+    "ticket-" + user.id,
+    {
+      type: "text", //This create a text channel, you can make a voice one too, by changing "text" to "voice"
+      parent: "947529213928427541",
+      permissionOverwrites: [
+        {
+          id: user.id, //To make it be seen by a certain role, user an ID instead
+          allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"], //Allow permissions
+          deny: [], //Deny permissions
+        },
+        {
+          // same as before
+          id: reaction.message.guild.roles.everyone,
+          deny: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
+        },
+      ],
+    }
+  );
+  client.channels.cache
+    .get(channel.id)
+    .send(
+      "Hello " +
+        user.toString() +
+        ", thank you for creating a support ticket! The " +
+        admin_role +
+        " will be with you shortly. Please can you describe your issue below?"
+    );
+}
