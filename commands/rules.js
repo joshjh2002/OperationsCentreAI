@@ -58,7 +58,8 @@ module.exports = {
           },
           {
             name: ":one::zero:",
-            value: "Do not use the ticketing system to spam anyone!",
+            value:
+              "Do not use the ticketing system for anything other than a legitimate reason!",
           },
           {
             name: ":one::one:",
