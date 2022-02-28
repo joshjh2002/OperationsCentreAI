@@ -24,7 +24,7 @@ client.once("ready", () => {
 
   client.channels.cache
     .get("947546216126890079")
-    .messages.fetch("947637068090208317");
+    .messages.fetch("947824249303887942");
 });
 
 client.on("messageCreate", (message) => {
@@ -43,7 +43,7 @@ client.on("messageCreate", (message) => {
 client.on("messageReactionAdd", (reaction, user) => {
   if (user.bot) return;
   //Do whatever you like with it
-  if (reaction.message.id === "947637068090208317") {
+  if (reaction.message.id === "947824249303887942") {
     reaction.users.remove(user.id);
     let admin_role = "";
     console.log(reaction.emoji.name);
@@ -53,8 +53,17 @@ client.on("messageReactionAdd", (reaction, user) => {
     } else if (reaction.emoji.name === "discord_logo") {
       admin_role = "<@&" + "893155966978240603" + ">";
       create_channel(reaction, user, admin_role);
+    } else if (reaction.emoji.name === "Rust") {
+      admin_role = "<@&" + "947809960534867998" + ">";
+      create_channel(reaction, user, admin_role);
     } else if (reaction.emoji.name === "☑") {
-      admin_role = "<@&" + "893155966978240603" + ">";
+      admin_role =
+        "<@&" +
+        "697047262081056828" +
+        ">" +
+        " <@&" +
+        "651471748214030408" +
+        ">";
       create_channel(reaction, user, admin_role);
     }
   }
