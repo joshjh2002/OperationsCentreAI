@@ -42,6 +42,11 @@ module.exports = {
             value:
               "Every 24-hours you can vote for our server [here](https://conan-exiles.com/server/89716/)!",
           },
+          {
+            name: "Shortcut:",
+            value:
+              "You can get a join link to the server by typing `-conanlink` into any chat. <@813799178689708104> will DM you the link!",
+          },
         ],
       };
       message.channel.send({ embeds: [embed] });

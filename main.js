@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const Discord = require("discord.js");
 const client = new Discord.Client({
   intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_MESSAGE_REACTIONS"],
@@ -17,7 +19,7 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.command.set(command.name, command);
 }
-client.login("ODEzNzk5MTc4Njg5NzA4MTA0.YDUjiw.vrCdeKy0SPEYP6AGQYDM6A07JOg");
+client.login(process.env.DC_TOKEN);
 
 client.once("ready", () => {
   console.log("Operations Centre AI: Online!");
@@ -31,7 +33,7 @@ client.on("messageCreate", (message) => {
   try {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const args = message.content.slice(prefix.length).toLowerCase().split(" ");
+    const args = message.content.slice(prefix.length).split(" ");
     const command = args.shift().toLowerCase();
 
     client.command.get(command).execute(message, args, Discord, client);
