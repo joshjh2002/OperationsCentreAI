@@ -2,9 +2,10 @@ const { channel } = require("diagnostics_channel");
 const { ShardClientUtil } = require("discord.js");
 
 module.exports = {
-    name: "math",
-    description: "Calculator",
-    async execute(message, args, Discord) {
+  name: "math",
+  description: "Calculator",
+  async execute(message, args, Discord) {
+    /*
         var i = 0;
         var param = "";
         while (args[i] != null) {
@@ -24,5 +25,6 @@ module.exports = {
                 }
             });
         msg.delete();
-    },
+        */
+  },
 };
