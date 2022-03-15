@@ -120,13 +120,13 @@ async function CheckServerStatus() {
   try {
     await QueryServers();
     if (conanMessage == null) {
-      let conanMessage = await client.channels.cache
+      conanMessage = await client.channels.cache
         .get("918251912795664384")
         .messages.fetch("950102920030990336");
     }
 
     if (rustMessage == null) {
-      let rustMessage = await client.channels.cache
+      rustMessage = await client.channels.cache
         .get("918251912795664384")
         .messages.fetch("950102960820584579");
     }
