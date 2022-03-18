@@ -14,77 +14,98 @@ const prefix = "-";
 const fs = require("fs");
 const { Query } = require("pg/lib");
 
+let conanStatus = "NULL";
+let rustStatus = "NULL";
+
+let conanMessage = null;
+let rustMessage = null;
+
 client.command = new Discord.Collection();
 
-const commandFiles = fs
-  .readdirSync("./commands/")
-  .filter((file) => file.endsWith(".js"));
+function LoadCommands() {
+  const commandFiles = fs
+    .readdirSync("./commands/")
+    .filter((file) => file.endsWith(".js"));
 
-for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.command.set(command.name, command);
+  for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.command.set(command.name, command);
+  }
 }
+LoadCommands();
+
 client.login(process.env.DC_TOKEN);
 
+//Once the bot is online
 client.once("ready", () => {
   console.log("Operations Centre AI: Online!");
 
+  //Caches message for the ticketing system
   client.channels.cache
     .get("947546216126890079")
     .messages.fetch("947824249303887942");
 
+  //Executes async function for displaying server status
   CheckServerStatus();
 });
 
+//When someone sends a message, this will execute
 client.on("messageCreate", (message) => {
+  //if this crashes, then the command does not exist
   try {
+    //if message is from the bot and doesn't start wit the prefix, then ignore it
     if (!message.content.startsWith(prefix) || message.author.bot) return;
 
+    //get command and arguments
     const args = message.content.slice(prefix.length).split(" ");
     const command = args.shift().toLowerCase();
 
+    //execute command and pass in needed information
     client.command.get(command).execute(message, args, Discord, client);
   } catch (error) {
     message.channel.send("This command was not recognised. Please try again!");
   }
 });
 
+//when a user reacts to a message
 client.on("messageReactionAdd", (reaction, user) => {
+  //ignore reactions from the bot
   if (user.bot) return;
-  //Do whatever you like with it
+
+  //checks if the reaction is on the ticket message
   if (reaction.message.id === "947824249303887942") {
-    reaction.users.remove(user.id);
-    let admin_role = "";
-    console.log(reaction.emoji.name);
-    if (reaction.emoji.name === "ConanExiles") {
-      admin_role = "<@&" + "892427926811865119" + ">";
-      create_channel(reaction, user, admin_role);
-    } else if (reaction.emoji.name === "discord_logo") {
-      admin_role = "<@&" + "893155966978240603" + ">";
-      create_channel(reaction, user, admin_role);
-    } else if (reaction.emoji.name === "Rust") {
-      admin_role = "<@&" + "947809960534867998" + ">";
-      create_channel(reaction, user, admin_role);
-    } else if (reaction.emoji.name === "☑") {
-      admin_role =
-        "<@&" +
-        "697047262081056828" +
-        ">" +
-        " <@&" +
-        "651471748214030408" +
-        ">";
-      create_channel(reaction, user, admin_role);
-    }
+    CreateTicket(reaction, user);
   }
 });
 
-async function create_channel(reaction, user, admin_role) {
+async function CreateTicket(reaction, user) {
+  reaction.users.remove(user.id);
+  let admin_role = "";
+  console.log(reaction.emoji.name);
+  if (reaction.emoji.name === "ConanExiles") {
+    admin_role = "<@&" + "892427926811865119" + ">";
+    CreateChannel(reaction, user, admin_role);
+  } else if (reaction.emoji.name === "discord_logo") {
+    admin_role = "<@&" + "893155966978240603" + ">";
+    CreateChannel(reaction, user, admin_role);
+  } else if (reaction.emoji.name === "Rust") {
+    admin_role = "<@&" + "947809960534867998" + ">";
+    CreateChannel(reaction, user, admin_role);
+  } else if (reaction.emoji.name === "☑") {
+    admin_role =
+      "<@&" + "697047262081056828" + ">" + " <@&" + "651471748214030408" + ">";
+    CreateChannel(reaction, user, admin_role);
+  }
+}
+
+async function CreateChannel(reaction, user, admin_role) {
   console.log("Reaction Created on Report Message!");
+  //creates channel in the same location as the reaction message
   const channel = await reaction.message.guild.channels.create(
     "ticket-" + user.id,
     {
       type: "text", //This create a text channel, you can make a voice one too, by changing "text" to "voice"
-      parent: "947529213928427541",
+      parent: "947529213928427541", //This is the category it is in
       permissionOverwrites: [
         {
           id: user.id, //To make it be seen by a certain role, user an ID instead
@@ -99,6 +120,8 @@ async function create_channel(reaction, user, admin_role) {
       ],
     }
   );
+
+  //Sends message to channel
   client.channels.cache
     .get(channel.id)
     .send(
@@ -109,12 +132,6 @@ async function create_channel(reaction, user, admin_role) {
         " will be with you shortly. Please can you describe your issue below?"
     );
 }
-
-let conanStatus = "NULL";
-let rustStatus = "NULL";
-
-let conanMessage = null;
-let rustMessage = null;
 
 async function CheckServerStatus() {
   try {
@@ -131,8 +148,21 @@ async function CheckServerStatus() {
         .messages.fetch("950102960820584579");
     }
 
-    let date = new Date();
+    SendConanEmbed();
 
+    SendRustEmbed();
+
+    setTimeout(CheckServerStatus, 186000);
+  } catch {
+    setTimeout(CheckServerStatus, 186000);
+  }
+}
+
+function SendConanEmbed() {
+  try {
+    const date = new Date();
+
+    //Create embed for the Conan Server
     const c_embed = {
       title: "Operation Exiles",
       description:
@@ -180,8 +210,14 @@ async function CheckServerStatus() {
       ],
     };
 
+    //Replace existing Conan embed with this
     conanMessage.edit({ embeds: [c_embed] });
-
+  } catch {}
+}
+function SendRustEmbed() {
+  try {
+    const date = new Date();
+    //Create rust embed
     const r_embed = {
       title: "Rusty Operations",
       description:
@@ -223,9 +259,8 @@ async function CheckServerStatus() {
       ],
     };
 
+    //replace rust embed with this
     rustMessage.edit({ embeds: [r_embed] });
-
-    setTimeout(CheckServerStatus, 186000);
   } catch {}
 }
 
@@ -234,27 +269,31 @@ async function QueryServers() {
     var conanServerData =
       "https://conan-exiles.com/api/?object=servers&element=detail&key=pPErjPgTNAqpdedOFkVcIFYJeF2JXdWYR88";
 
-    $.getJSON(conanServerData, function (data) {
-      let isOnline = data.is_online;
+    await $.getJSON(conanServerData, function (data) {
+      try {
+        let isOnline = data.is_online;
 
-      if (isOnline == "1") {
-        conanStatus = "Online";
-      } else {
-        conanStatus = "Offline";
-      }
+        if (isOnline == "1") {
+          conanStatus = "Online";
+        } else {
+          conanStatus = "Offline";
+        }
+      } catch {}
     });
 
     var rustSererData =
       "https://rust-servers.net/api/?object=servers&element=detail&key=c0T0pgPyaS6EnnU1XuTjFh1rmvJdPQz1gnE";
 
-    $.getJSON(rustSererData, function (data) {
-      let isOnline = data.is_online;
+    await $.getJSON(rustSererData, function (data) {
+      try {
+        let isOnline = data.is_online;
 
-      if (isOnline == "1") {
-        rustStatus = "Online";
-      } else {
-        rustStatus = "Offline";
-      }
+        if (isOnline == "1") {
+          rustStatus = "Online";
+        } else {
+          rustStatus = "Offline";
+        }
+      } catch {}
     });
   } catch {
     conanStatus = "NULL";
