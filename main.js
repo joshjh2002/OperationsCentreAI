@@ -131,7 +131,7 @@ async function CheckServerStatus() {
         .messages.fetch("950102960820584579");
     }
 
-    let date = new Date();
+    setTimeout(CheckServerStatus, 186000);
 
     const c_embed = {
       title: "Operation Exiles",
