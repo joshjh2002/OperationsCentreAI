@@ -234,7 +234,7 @@ async function QueryServers() {
     var conanServerData =
       "https://conan-exiles.com/api/?object=servers&element=detail&key=pPErjPgTNAqpdedOFkVcIFYJeF2JXdWYR88";
 
-    $.getJSON(conanServerData, function (data) {
+    await $.getJSON(conanServerData, function (data) {
       let isOnline = data.is_online;
 
       if (isOnline == "1") {
@@ -247,7 +247,7 @@ async function QueryServers() {
     var rustSererData =
       "https://rust-servers.net/api/?object=servers&element=detail&key=c0T0pgPyaS6EnnU1XuTjFh1rmvJdPQz1gnE";
 
-    $.getJSON(rustSererData, function (data) {
+    await $.getJSON(rustSererData, function (data) {
       let isOnline = data.is_online;
 
       if (isOnline == "1") {
