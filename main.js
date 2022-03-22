@@ -1,4 +1,5 @@
 require("dotenv").config();
+const tools = require("./tools");
 
 const { JSDOM } = require("jsdom");
 const { window } = new JSDOM("");
@@ -13,6 +14,7 @@ const prefix = "-";
 
 const fs = require("fs");
 const { Query } = require("pg/lib");
+const { eventNames } = require("process");
 
 let conanStatus = "NULL";
 let rustStatus = "NULL";
@@ -22,17 +24,7 @@ let rustMessage = null;
 
 client.command = new Discord.Collection();
 
-function LoadCommands() {
-  const commandFiles = fs
-    .readdirSync("./commands/")
-    .filter((file) => file.endsWith(".js"));
-
-  for (const file of commandFiles) {
-    const command = require(`./commands/${file}`);
-    client.command.set(command.name, command);
-  }
-}
-LoadCommands();
+tools.LoadCommands(fs, client);
 
 client.login(process.env.DC_TOKEN);
 
@@ -42,8 +34,8 @@ client.once("ready", () => {
 
   //Caches message for the ticketing system
   client.channels.cache
-    .get("947546216126890079")
-    .messages.fetch("947824249303887942");
+    .get(process.env.DC_TICKETS_CHANNEL)
+    .messages.fetch(process.env.DC_TICKETS_MESSAGE);
 
   //Executes async function for displaying server status
   CheckServerStatus();
@@ -73,79 +65,25 @@ client.on("messageReactionAdd", (reaction, user) => {
   if (user.bot) return;
 
   //checks if the reaction is on the ticket message
-  if (reaction.message.id === "947824249303887942") {
-    CreateTicket(reaction, user);
+  if (reaction.message.id == process.env.DC_TICKETS_MESSAGE) {
+    reaction.users.remove(user.id);
+    tools.CreateTicket(reaction, user, client);
   }
 });
-
-async function CreateTicket(reaction, user) {
-  reaction.users.remove(user.id);
-  let admin_role = "";
-  console.log(reaction.emoji.name);
-  if (reaction.emoji.name === "ConanExiles") {
-    admin_role = "<@&" + "892427926811865119" + ">";
-    CreateChannel(reaction, user, admin_role);
-  } else if (reaction.emoji.name === "discord_logo") {
-    admin_role = "<@&" + "893155966978240603" + ">";
-    CreateChannel(reaction, user, admin_role);
-  } else if (reaction.emoji.name === "Rust") {
-    admin_role = "<@&" + "947809960534867998" + ">";
-    CreateChannel(reaction, user, admin_role);
-  } else if (reaction.emoji.name === "☑") {
-    admin_role =
-      "<@&" + "697047262081056828" + ">" + " <@&" + "651471748214030408" + ">";
-    CreateChannel(reaction, user, admin_role);
-  }
-}
-
-async function CreateChannel(reaction, user, admin_role) {
-  console.log("Reaction Created on Report Message!");
-  //creates channel in the same location as the reaction message
-  const channel = await reaction.message.guild.channels.create(
-    "ticket-" + user.id,
-    {
-      type: "text", //This create a text channel, you can make a voice one too, by changing "text" to "voice"
-      parent: "947529213928427541", //This is the category it is in
-      permissionOverwrites: [
-        {
-          id: user.id, //To make it be seen by a certain role, user an ID instead
-          allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"], //Allow permissions
-          deny: [], //Deny permissions
-        },
-        {
-          // same as before
-          id: reaction.message.guild.roles.everyone,
-          deny: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY"],
-        },
-      ],
-    }
-  );
-
-  //Sends message to channel
-  client.channels.cache
-    .get(channel.id)
-    .send(
-      "Hello " +
-        user.toString() +
-        ", thank you for creating a support ticket! The " +
-        admin_role +
-        " will be with you shortly. Please can you describe your issue below?"
-    );
-}
 
 async function CheckServerStatus() {
   try {
     await QueryServers();
     if (conanMessage == null) {
       conanMessage = await client.channels.cache
-        .get("918251912795664384")
-        .messages.fetch("950102920030990336");
+        .get(process.env.DC_SERVERS_CHANNEL)
+        .messages.fetch(process.env.DC_CONAN_MESSAGE);
     }
 
     if (rustMessage == null) {
       rustMessage = await client.channels.cache
-        .get("918251912795664384")
-        .messages.fetch("950102960820584579");
+        .get(process.env.DC_SERVERS_CHANNEL)
+        .messages.fetch(process.env.DC_RUST_MESSAGE);
     }
 
     SendConanEmbed();
@@ -214,6 +152,7 @@ function SendConanEmbed() {
     conanMessage.edit({ embeds: [c_embed] });
   } catch {}
 }
+
 function SendRustEmbed() {
   try {
     const date = new Date();
