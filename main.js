@@ -278,7 +278,9 @@ async function QueryServers() {
         } else {
           conanStatus = "Offline";
         }
-      } catch {}
+      } catch {
+        conanStatus = "NULL";
+      }
     });
 
     var rustSererData =
@@ -293,7 +295,9 @@ async function QueryServers() {
         } else {
           rustStatus = "Offline";
         }
-      } catch {}
+      } catch {
+        rustStstus = "NULL";
+      }
     });
   } catch {
     conanStatus = "NULL";
